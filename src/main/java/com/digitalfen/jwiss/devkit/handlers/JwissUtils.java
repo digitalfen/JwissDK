@@ -1,15 +1,25 @@
 package com.digitalfen.jwiss.devkit.handlers;
 
-import com.digitalfen.jwiss.devkit.utils.AnnotationsUtils;
-import com.digitalfen.jwiss.devkit.utils.TextUtils;
+import com.digitalfen.jwiss.devkit.utils.AnnotationUtils;
+import com.digitalfen.jwiss.devkit.utils.IOUtils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/**
+ * Usable Utils Connector for JwissTool
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwissUtils {
 
-    public static final TextUtils text = TextUtils.getInstance();
-    public static final AnnotationsUtils annotations = AnnotationsUtils.getInstance();
+    /**
+     * Utils for Input and Output
+     */
+    public static final IOUtils io = IOUtils.getInstance();
+
+    /**
+     * Utils for Annotations
+     */
+    public static final AnnotationUtils annotations = AnnotationUtils.getInstance();
 
 }

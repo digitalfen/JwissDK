@@ -2,17 +2,25 @@ package com.digitalfen.jwiss.devkit.logger;
 
 import java.util.Date;
 
-import com.digitalfen.jwiss.devkit.enums.JwissVerboseLevelEnum;
+import com.digitalfen.jwiss.devkit.enums.VerboseLevelEnum;
 import com.digitalfen.jwiss.devkit.handlers.JwissCache;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/**
+ * Jwiss Log Service
+ */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class JwissLogService {
 
     private static JwissLogService instance;
 
+    /**
+     * Get instance for Log Service
+     * 
+     * @return JwissLogService
+     */
     public static synchronized JwissLogService getInstance() {
 	if (instance == null) {
 	    instance = new JwissLogService();
@@ -20,29 +28,41 @@ public class JwissLogService {
 	return instance;
     }
 
-    protected void printLogln(String msg, JwissVerboseLevelEnum msgVerboseLevel) {
-	msgBuilder(msg, msgVerboseLevel);
+    /**
+     * Build a new println on JwissTool System.out with custom methods.
+     * 
+     * @param message         String
+     * @param msgVerboseLevel VerboseLevelEnum
+     * 
+     * @return void
+     */
+    protected void printLogln(String message, VerboseLevelEnum msgVerboseLevel) {
+	messageBuilder(message, msgVerboseLevel);
 
     }
 
-    protected void printLog(String msg, JwissVerboseLevelEnum msgVerboseLevel) {
-	msgBuilder(msg, msgVerboseLevel);
-    }
-
-    protected void msgBuilder(String msg, JwissVerboseLevelEnum msgVerboseLevel) {
-	JwissVerboseLevelEnum appVerboseLevel;
+    /**
+     * Build labels and format values then Print message
+     * 
+     * @param message         String
+     * @param msgVerboseLevel VerboseLevelEnum
+     * 
+     * @return void
+     */
+    protected void messageBuilder(String message, VerboseLevelEnum msgVerboseLevel) {
+	VerboseLevelEnum appVerboseLevel;
 
 	String cacheVerboseLevel = JwissCache.configurations.get("global.verbose");
 
 	if (cacheVerboseLevel == null) {
-	    appVerboseLevel = JwissVerboseLevelEnum.OFF;
+	    appVerboseLevel = VerboseLevelEnum.OFF;
 
-	} else if (cacheVerboseLevel == JwissVerboseLevelEnum.OFF.toString()
+	} else if (cacheVerboseLevel == VerboseLevelEnum.OFF.toString()
 		.toUpperCase()) {
-	    appVerboseLevel = JwissVerboseLevelEnum.OFF;
+	    appVerboseLevel = VerboseLevelEnum.OFF;
 
 	} else {
-	    appVerboseLevel = JwissVerboseLevelEnum
+	    appVerboseLevel = VerboseLevelEnum
 		    .valueOf(cacheVerboseLevel.toUpperCase());
 
 	}
@@ -61,73 +81,60 @@ public class JwissLogService {
 	line = line.concat(" | ");
 	line = line.concat(fClassName);
 
-	String toPersist = new String();
-	toPersist = line.replace(JwissVerboseLevelEnum.INFO.toString().toUpperCase(),
-		JwissVerboseLevelEnum.DEBUG.toString().toUpperCase());
-	toPersist = toPersist.concat(callerName);
-	toPersist = toPersist.concat(" : ");
-	toPersist = toPersist.concat(msg);
+	if (appVerboseLevel.equals(VerboseLevelEnum.GLOBAL)) {
+	    line = "\033[0;35m".concat(line).concat("\033[0m");
+	    line = line.concat(" - ");
+	    line = line.concat(message);
+	    System.out.println(line);
 
-	persistLog(toPersist);
+	} else if (appVerboseLevel.equals(VerboseLevelEnum.FATAL)) {
+	    line = line.concat(" - ");
+	    line = line.concat(message);
+	    line = "\033[0;31m".concat(line).concat("\033[0m");
+	    System.out.println(line);
 
-	if (!appVerboseLevel.equals(JwissVerboseLevelEnum.OFF)
-		&& !appVerboseLevel.equals(JwissVerboseLevelEnum.ERROR)) {
-	    if ((msgVerboseLevel.equals(JwissVerboseLevelEnum.INFO)
-		    && appVerboseLevel.equals(JwissVerboseLevelEnum.INFO)) ||
-		    (msgVerboseLevel.equals(JwissVerboseLevelEnum.INFO)
-			    && appVerboseLevel.equals(JwissVerboseLevelEnum.DEBUG))) {
+	} else if (!appVerboseLevel.equals(VerboseLevelEnum.OFF)
+		&& !appVerboseLevel.equals(VerboseLevelEnum.FATAL)) {
+	    if ((msgVerboseLevel.equals(VerboseLevelEnum.INFO)
+		    && appVerboseLevel.equals(VerboseLevelEnum.INFO)) ||
+		    (msgVerboseLevel.equals(VerboseLevelEnum.INFO)
+			    && appVerboseLevel.equals(VerboseLevelEnum.DEBUG))) {
 		line = "\033[0;32m".concat(line).concat("\033[0m");
 		line = line.concat(" - ");
-		line = line.concat(msg);
+		line = line.concat(message);
 
 		System.out.println(line);
 
-	    } else if (msgVerboseLevel.equals(JwissVerboseLevelEnum.DEBUG)
-		    && appVerboseLevel.equals(JwissVerboseLevelEnum.DEBUG)) {
+	    } else if (msgVerboseLevel.equals(VerboseLevelEnum.DEBUG)
+		    && appVerboseLevel.equals(VerboseLevelEnum.DEBUG)) {
 		line = "\033[0;34m".concat(line).concat("\033[0m");
 		line = line.concat(" - ");
-		line = line.concat(msg);
+		line = line.concat(message);
 		System.out.println(line);
 
-	    } else if (msgVerboseLevel.equals(JwissVerboseLevelEnum.WARNING)) {
+	    } else if (msgVerboseLevel.equals(VerboseLevelEnum.WARNING)) {
 		line = "\033[0;33m".concat(line).concat("\033[0m");
 		line = line.concat(" - ");
-		line = line.concat(msg);
+		line = line.concat(message);
 		System.out.println(line);
 
-	    } else if (msgVerboseLevel.equals(JwissVerboseLevelEnum.FATAL)) {
-		line = line.concat(" - ");
-		line = line.concat(msg);
-		line = "\033[0;31m".concat(line).concat("\033[0m");
-		System.out.println(line);
-
-	    } else if (msgVerboseLevel.equals(JwissVerboseLevelEnum.GLOBAL)) {
-		line = "\033[0;35m".concat(line).concat("\033[0m");
-		line = line.concat(" - ");
-		line = line.concat(msg);
-		System.out.println(line);
-
-	    } else if (msgVerboseLevel.equals(JwissVerboseLevelEnum.ERROR)) {
+	    } else if (msgVerboseLevel.equals(VerboseLevelEnum.ERROR)) {
 		line = "\033[0;31m".concat(line).concat("\033[0m");
 		line = line.concat(" - ");
-		line = line.concat(msg);
+		line = line.concat(message);
 		System.out.println(line);
 
 	    }
 
 	} else {
-	    if (msgVerboseLevel.equals(JwissVerboseLevelEnum.GLOBAL)) {
+	    if (msgVerboseLevel.equals(VerboseLevelEnum.GLOBAL)) {
 		line = "\033[0;35m".concat(line).concat("\033[0m");
 		line = line.concat(" - ");
-		line = line.concat(msg);
+		line = line.concat(message);
 		System.out.println(line);
 
 	    }
 	}
-    }
-
-    protected void persistLog(String lines) {
-
     }
 
 }

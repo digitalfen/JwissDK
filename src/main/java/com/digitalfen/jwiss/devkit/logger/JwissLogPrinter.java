@@ -3,17 +3,32 @@ package com.digitalfen.jwiss.devkit.logger;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.digitalfen.jwiss.devkit.enums.JwissVerboseLevelEnum;
+import com.digitalfen.jwiss.devkit.enums.VerboseLevelEnum;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/**
+ * Log Printer Actions
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwissLogPrinter {
 
+    /**
+     * @value instance JwissLogPrinter
+     */
     private static JwissLogPrinter instance;
+
+    /**
+     * @value utils JwissLogService
+     */
     private static JwissLogService utils;
 
+    /**
+     * Get instance for Log Printer
+     * 
+     * @value JwissLogPrinter
+     */
     public static synchronized JwissLogPrinter getInstance() {
 	if (instance == null) {
 	    instance = new JwissLogPrinter();
@@ -22,40 +37,88 @@ public class JwissLogPrinter {
 	return instance;
     }
 
+    /**
+     * Process a string as message with info verbose level
+     * 
+     * @param msg String
+     * @return void
+     */
     public void info(String msg) {
-	utils.printLogln(msg, JwissVerboseLevelEnum.INFO);
+	utils.printLogln(msg, VerboseLevelEnum.INFO);
     }
 
+    /**
+     * Process a list of strings as messages with info verbose level
+     * 
+     * @param msgs String[]
+     * @return void
+     */
     public void info(String[] msgs) {
 	for (String msg : msgs) {
-	    utils.printLogln(msg, JwissVerboseLevelEnum.INFO);
+	    utils.printLogln(msg, VerboseLevelEnum.INFO);
 	}
     }
 
+    /**
+     * Process a string as message with debug verbose level
+     * 
+     * @param msg String
+     * @return void
+     */
     public void debug(String msg) {
-	utils.printLogln(msg, JwissVerboseLevelEnum.DEBUG);
+	utils.printLogln(msg, VerboseLevelEnum.DEBUG);
     }
 
+    /**
+     * Process a list of strings as messages with debug verbose level
+     * 
+     * @param msgs String[]
+     * @return void
+     */
     public void debug(String[] msgs) {
 	for (String msg : msgs) {
-	    utils.printLogln(msg, JwissVerboseLevelEnum.DEBUG);
+	    utils.printLogln(msg, VerboseLevelEnum.DEBUG);
 	}
     }
 
+    /**
+     * Process a string as message with warning verbose level
+     * 
+     * @param msg String
+     * @return void
+     */
     public void warning(String msg) {
-	utils.printLogln(msg, JwissVerboseLevelEnum.WARNING);
+	utils.printLogln(msg, VerboseLevelEnum.WARNING);
     }
 
+    /**
+     * Process a list of strings as messages with warning verbose level
+     * 
+     * @param msgs String[]
+     * @return void
+     */
     public void warning(String[] msgs) {
 	for (String msg : msgs) {
-	    utils.printLogln(msg, JwissVerboseLevelEnum.WARNING);
+	    utils.printLogln(msg, VerboseLevelEnum.WARNING);
 	}
     }
 
+    /**
+     * Process a string as message with error verbose level
+     * 
+     * @param msg String
+     * @return void
+     */
     public void error(String msg) {
-	utils.printLogln(msg, JwissVerboseLevelEnum.ERROR);
+	utils.printLogln(msg, VerboseLevelEnum.ERROR);
     }
 
+    /**
+     * Process a Exception as message with error verbose level
+     * 
+     * @param msg Exception
+     * @return void
+     */
     public void error(Exception e) {
 	StackTraceElement[] stackTraceElements = e.getStackTrace();
 
@@ -67,33 +130,63 @@ public class JwissLogPrinter {
 
 	// Imprimir cada linha do stack trace
 	for (String line : stackTraceLines) {
-	    utils.printLogln("> " + line, JwissVerboseLevelEnum.ERROR);
+	    utils.printLogln("> " + line, VerboseLevelEnum.ERROR);
 	}
     }
 
+    /**
+     * Process a list of strings as messages with error verbose level
+     * 
+     * @param msgs String[]
+     * @return void
+     */
     public void error(String[] msgs) {
 	for (String msg : msgs) {
-	    utils.printLogln(msg, JwissVerboseLevelEnum.ERROR);
+	    utils.printLogln(msg, VerboseLevelEnum.ERROR);
 	}
     }
 
+    /**
+     * Process a string as message with fatal verbose level
+     * 
+     * @param msg String
+     * @return void
+     */
     public void fatal(String msg) {
-	utils.printLogln(msg, JwissVerboseLevelEnum.FATAL);
+	utils.printLogln(msg, VerboseLevelEnum.FATAL);
     }
 
+    /**
+     * Process a list of strings as messages with fatal verbose level
+     * 
+     * @param msgs String[]
+     * @return void
+     */
     public void fatal(String[] msgs) {
 	for (String msg : msgs) {
-	    utils.printLogln(msg, JwissVerboseLevelEnum.FATAL);
+	    utils.printLogln(msg, VerboseLevelEnum.FATAL);
 	}
     }
 
+    /**
+     * Process a string as message with global verbose level
+     * 
+     * @param msg String
+     * @return void
+     */
     public void global(String msg) {
-	utils.printLogln(msg, JwissVerboseLevelEnum.GLOBAL);
+	utils.printLogln(msg, VerboseLevelEnum.GLOBAL);
     }
 
+    /**
+     * Process a list of strings as messages with global verbose level
+     * 
+     * @param msgs String[]
+     * @return void
+     */
     public void global(String[] msgs) {
 	for (String msg : msgs) {
-	    utils.printLogln(msg, JwissVerboseLevelEnum.GLOBAL);
+	    utils.printLogln(msg, VerboseLevelEnum.GLOBAL);
 	}
     }
 
