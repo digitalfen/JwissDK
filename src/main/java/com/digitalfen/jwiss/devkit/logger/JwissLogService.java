@@ -2,6 +2,7 @@ package com.digitalfen.jwiss.devkit.logger;
 
 import java.util.Date;
 
+import com.digitalfen.jwiss.devkit.enums.JwissConfigTypeEnum;
 import com.digitalfen.jwiss.devkit.enums.VerboseLevelEnum;
 import com.digitalfen.jwiss.devkit.handlers.JwissCache;
 
@@ -52,13 +53,13 @@ public class JwissLogService {
     protected void messageBuilder(String message, VerboseLevelEnum msgVerboseLevel) {
 	VerboseLevelEnum appVerboseLevel;
 
-	String cacheVerboseLevel = JwissCache.configurations.get("global.verbose");
+	String cacheVerboseLevel = JwissCache.configurations
+		.get("verbose");
 
 	if (cacheVerboseLevel == null) {
 	    appVerboseLevel = VerboseLevelEnum.OFF;
 
-	} else if (cacheVerboseLevel == VerboseLevelEnum.OFF.toString()
-		.toUpperCase()) {
+	} else if (cacheVerboseLevel.toUpperCase() == VerboseLevelEnum.OFF.toString()) {
 	    appVerboseLevel = VerboseLevelEnum.OFF;
 
 	} else {
@@ -81,20 +82,19 @@ public class JwissLogService {
 	line = line.concat(" | ");
 	line = line.concat(fClassName);
 
-	if (appVerboseLevel.equals(VerboseLevelEnum.GLOBAL)) {
+	if (msgVerboseLevel.equals(VerboseLevelEnum.GLOBAL)) {
 	    line = "\033[0;35m".concat(line).concat("\033[0m");
 	    line = line.concat(" - ");
 	    line = line.concat(message);
 	    System.out.println(line);
 
-	} else if (appVerboseLevel.equals(VerboseLevelEnum.FATAL)) {
+	} else if (msgVerboseLevel.equals(VerboseLevelEnum.FATAL)) {
 	    line = line.concat(" - ");
 	    line = line.concat(message);
 	    line = "\033[0;31m".concat(line).concat("\033[0m");
 	    System.out.println(line);
 
-	} else if (!appVerboseLevel.equals(VerboseLevelEnum.OFF)
-		&& !appVerboseLevel.equals(VerboseLevelEnum.FATAL)) {
+	} else if (!appVerboseLevel.equals(VerboseLevelEnum.OFF)) {
 	    if ((msgVerboseLevel.equals(VerboseLevelEnum.INFO)
 		    && appVerboseLevel.equals(VerboseLevelEnum.INFO)) ||
 		    (msgVerboseLevel.equals(VerboseLevelEnum.INFO)

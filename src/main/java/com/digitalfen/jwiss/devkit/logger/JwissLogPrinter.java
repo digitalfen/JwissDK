@@ -2,6 +2,7 @@ package com.digitalfen.jwiss.devkit.logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.digitalfen.jwiss.devkit.enums.VerboseLevelEnum;
 
@@ -79,6 +80,37 @@ public class JwissLogPrinter {
 	for (String msg : msgs) {
 	    utils.printLogln(msg, VerboseLevelEnum.DEBUG);
 	}
+    }
+
+    /**
+     * Process a map of strings as table with debug verbose level
+     * 
+     * @param map Map<String, String>
+     * @return void
+     */
+    public void debug(Map<String, String> map) {
+	List<String> lines = new ArrayList<>();
+	int columnWidth = 20;
+
+	// Cabeçalho da tabela
+	lines.add(String.format("%-" + columnWidth + "s %-" + columnWidth + "s",
+		"--------------------", "--------------------"));
+
+	// Adiciona as linhas da tabela
+	for (Map.Entry<String, String> entry : map.entrySet()) {
+	    String key = entry.getKey();
+	    String value = entry.getValue();
+	    lines.add(String.format("%-" + columnWidth + "s %-" + columnWidth + "s", key,
+		    value));
+	}
+
+	lines.add(String.format("%-" + columnWidth + "s %-" + columnWidth + "s",
+		"--------------------", "--------------------"));
+
+	for (String line : lines) {
+	    utils.printLogln(line, VerboseLevelEnum.DEBUG);
+	}
+
     }
 
     /**

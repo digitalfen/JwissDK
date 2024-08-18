@@ -1,7 +1,7 @@
 package com.digitalfen.jwiss.devkit.handlers;
 
-import com.digitalfen.jwiss.devkit.utils.AnnotationUtils;
 import com.digitalfen.jwiss.devkit.utils.IOUtils;
+import com.digitalfen.jwiss.devkit.utils.PluginsUtils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -18,8 +18,8 @@ public class JwissUtils {
     public static final IOUtils io = IOUtils.getInstance();
 
     /**
-     * Utils for Annotations
+     * Utils for Plugins
      */
-    public static final AnnotationUtils annotations = AnnotationUtils.getInstance();
+    public static final PluginsUtils plugins = PluginsUtils.getInstance();
 
 }

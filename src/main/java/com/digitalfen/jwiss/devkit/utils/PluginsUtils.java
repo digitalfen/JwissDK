@@ -6,18 +6,34 @@ import com.digitalfen.jwiss.devkit.interfaces.JwissPluginInterface;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/**
+ * Utils for Annotations in JwissTool
+ * 
+ * @value instance AnnotationUtils
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AnnotationsUtils {
+public class PluginsUtils {
 
-    private static AnnotationsUtils instance;
+    private static PluginsUtils instance;
 
-    public static synchronized AnnotationsUtils getInstance() {
+    /**
+     * Get instance for Plugins
+     * 
+     * @return AnnotationUtils
+     */
+    public static synchronized PluginsUtils getInstance() {
 	if (instance == null) {
-	    instance = new AnnotationsUtils();
+	    instance = new PluginsUtils();
 	}
 	return instance;
     }
 
+    /**
+     * Get Command from Plugin
+     * 
+     * @param pluginInstance JwissPluginInterface
+     * @return String
+     */
     public String getPluginCommand(JwissPluginInterface pluginInstance) {
 	Class<?> pluginClass = pluginInstance.getClass();
 

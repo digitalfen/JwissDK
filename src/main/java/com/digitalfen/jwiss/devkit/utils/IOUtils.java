@@ -38,7 +38,7 @@ public class IOUtils {
      * @param input String
      * @return List<Command>
      */
-    public static List<Command> parseInput(String input) {
+    public List<Command> parseInput(String input) {
 
 	List<Command> out = new ArrayList<>();
 	List<String> commands = Arrays.asList(input.split("&&"));
