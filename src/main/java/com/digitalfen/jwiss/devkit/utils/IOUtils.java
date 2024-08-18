@@ -1,5 +1,9 @@
 package com.digitalfen.jwiss.devkit.utils;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,54 +36,65 @@ public class IOUtils {
 	return instance;
     }
 
+   
+
     /**
-     * Parse an Input String into List of Commands
+     * Insere uma linha em um arquivo .conf. Se o arquivo não existir, ele será
+     * criado.
      * 
-     * @param input String
-     * @return List<Command>
+     * @param filePath Caminho do arquivo, relativo à raiz do projeto.
+     * @param line     Linha a ser inserida no arquivo.
+     * @throws IOException Se ocorrer um erro ao acessar o arquivo.
      */
-    public List<Command> parseInput(String input) {
+    public void appendLineToFile(String filePath, String line) {
+	File file = new File(filePath);
 
-	List<Command> out = new ArrayList<>();
-	List<String> commands = Arrays.asList(input.split("&&"));
-
-	for (String command : commands) {
-	    List<String> splitedCommand = Arrays.asList(command.split(" "));
-	    String jwissCommandKey = splitedCommand.get(1);
-	    String jwissCommandParent = splitedCommand.get(0);
-	    String[] arguments = command.replace(splitedCommand.get(0), "")
-		    .replace(splitedCommand.get(1), "").split("-");
-
-	    Command jwissCommand = new Command();
-	    jwissCommand.setUsage(jwissCommandKey);
-	    jwissCommand.setParentName(jwissCommandParent);
-
-	    List<Argument> jwissArguments = new ArrayList<>();
-
-	    for (String str : arguments) {
-		List<String> splitedArguments = Arrays.asList(str.split(" "));
-
-		if (splitedArguments.size() == 1) {
-		    Argument arg = new Argument();
-		    arg.setKey(splitedArguments.get(0));
-		    arg.setValue(null);
-		    jwissArguments.add(arg);
-		} else if (splitedArguments.size() > 1) {
-		    for (int i = 1; i < splitedArguments.size(); i++) {
-			Argument arg = new Argument();
-			arg.setKey(splitedArguments.get(0));
-			arg.setValue(splitedArguments.get(i));
-			jwissArguments.add(arg);
-		    }
-		}
-	    }
-
-	    jwissCommand.setArguments(jwissArguments);
-	    out.add(jwissCommand);
-
+	// Verifica se o arquivo existe e cria o arquivo se não existir
+	if (!file.exists()) {
+	    file.getParentFile().mkdirs(); // Cria os diretórios, se necessário
+	    try {
+		file.createNewFile();
+	    } catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    } // Cria o arquivo
 	}
 
-	return out;
+	// Usa BufferedWriter para adicionar a linha ao final do arquivo
+	try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+	    writer.newLine(); // Adiciona uma nova linha antes de escrever a nova linha
+	    writer.write(line); // Escreve a linha no arquivo
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    /**
+     * Escreve uma linha em um arquivo .conf. Se o arquivo não existir, ele será
+     * criado. Se o arquivo já existir, seu conteúdo será sobrescrito.
+     * 
+     * @param filePath Caminho do arquivo, relativo à raiz do projeto.
+     * @param line     Linha a ser escrita no arquivo.
+     */
+    public void writeLineToFile(String filePath, String line) {
+	File file = new File(filePath);
+
+	// Verifica se o arquivo existe e cria o arquivo se não existir
+	if (!file.exists()) {
+	    file.getParentFile().mkdirs(); // Cria os diretórios, se necessário
+	    try {
+		file.createNewFile(); // Cria o arquivo
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
+	}
+
+	// Usa BufferedWriter para escrever a linha no arquivo
+	try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+	    writer.write(line); // Escreve a linha no arquivo
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
     }
 
 }

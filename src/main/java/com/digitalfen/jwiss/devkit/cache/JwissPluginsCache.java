@@ -41,7 +41,7 @@ public class JwissPluginsCache {
      * @return void
      */
     public void put(String key, JwissPluginInterface value) {
-	plugins.put(key, value);
+	plugins.put(key.toLowerCase(), value);
     }
 
     /**
@@ -51,7 +51,7 @@ public class JwissPluginsCache {
      * @return JwissPluginInterface
      */
     public JwissPluginInterface get(String key) {
-	return plugins.get(key);
+	return plugins.get(key.toLowerCase());
     }
 
     /**
@@ -70,7 +70,7 @@ public class JwissPluginsCache {
      * @return void
      */
     public void remove(String key) {
-	plugins.remove(key);
+	plugins.remove(key.toLowerCase());
     }
 
     /**
@@ -80,7 +80,7 @@ public class JwissPluginsCache {
      * @return boolean
      */
     public boolean containsKey(String key) {
-	return plugins.containsKey(key);
+	return plugins.containsKey(key.toLowerCase());
     }
 
     /**

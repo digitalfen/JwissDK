@@ -1,224 +1,123 @@
 package com.digitalfen.jwiss.devkit.logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.Date;
 
-import com.digitalfen.jwiss.devkit.enums.VerboseLevelEnum;
+import com.digitalfen.jwiss.devkit.enums.JwissVerboseLevelEnum;
+import com.digitalfen.jwiss.devkit.handlers.JwissCache;
 
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * Log Printer Actions
+ * Jwiss Log Service
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class JwissLogPrinter {
 
     /**
-     * @value instance JwissLogPrinter
-     */
-    private static JwissLogPrinter instance;
-
-    /**
-     * @value utils JwissLogService
-     */
-    private static JwissLogService utils;
-
-    /**
-     * Get instance for Log Printer
+     * Build a new println on JwissTool System.out with custom methods.
      * 
-     * @value JwissLogPrinter
+     * @param message         String
+     * @param msgVerboseLevel JwissVerboseLevelEnum
+     * 
+     * @return void
      */
-    public static synchronized JwissLogPrinter getInstance() {
-	if (instance == null) {
-	    instance = new JwissLogPrinter();
-	    utils = new JwissLogService();
-	}
-	return instance;
+    protected void printLogln(String message, JwissVerboseLevelEnum msgVerboseLevel) {
+	messageBuilder(message, msgVerboseLevel);
+
     }
 
     /**
-     * Process a string as message with info verbose level
+     * Build labels and format values then Print message
      * 
-     * @param msg String
+     * @param message         String
+     * @param msgVerboseLevel JwissVerboseLevelEnum
+     * 
      * @return void
      */
-    public void info(String msg) {
-	utils.printLogln(msg, VerboseLevelEnum.INFO);
-    }
+    protected void messageBuilder(String message, JwissVerboseLevelEnum msgVerboseLevel) {
+	JwissVerboseLevelEnum appVerboseLevel;
 
-    /**
-     * Process a list of strings as messages with info verbose level
-     * 
-     * @param msgs String[]
-     * @return void
-     */
-    public void info(String[] msgs) {
-	for (String msg : msgs) {
-	    utils.printLogln(msg, VerboseLevelEnum.INFO);
-	}
-    }
+	String cacheVerboseLevel = JwissCache.configurations
+		.get("verbose");
 
-    /**
-     * Process a string as message with debug verbose level
-     * 
-     * @param msg String
-     * @return void
-     */
-    public void debug(String msg) {
-	utils.printLogln(msg, VerboseLevelEnum.DEBUG);
-    }
+	if (cacheVerboseLevel == null) {
+	    appVerboseLevel = JwissVerboseLevelEnum.OFF;
 
-    /**
-     * Process a list of strings as messages with debug verbose level
-     * 
-     * @param msgs String[]
-     * @return void
-     */
-    public void debug(String[] msgs) {
-	for (String msg : msgs) {
-	    utils.printLogln(msg, VerboseLevelEnum.DEBUG);
-	}
-    }
+	} else if (cacheVerboseLevel.toUpperCase() == JwissVerboseLevelEnum.OFF.toString()) {
+	    appVerboseLevel = JwissVerboseLevelEnum.OFF;
 
-    /**
-     * Process a map of strings as table with debug verbose level
-     * 
-     * @param map Map<String, String>
-     * @return void
-     */
-    public void debug(Map<String, String> map) {
-	List<String> lines = new ArrayList<>();
-	int columnWidth = 20;
+	} else {
+	    appVerboseLevel = JwissVerboseLevelEnum
+		    .valueOf(cacheVerboseLevel.toUpperCase());
 
-	// Cabeçalho da tabela
-	lines.add(String.format("%-" + columnWidth + "s %-" + columnWidth + "s",
-		"--------------------", "--------------------"));
-
-	// Adiciona as linhas da tabela
-	for (Map.Entry<String, String> entry : map.entrySet()) {
-	    String key = entry.getKey();
-	    String value = entry.getValue();
-	    lines.add(String.format("%-" + columnWidth + "s %-" + columnWidth + "s", key,
-		    value));
 	}
 
-	lines.add(String.format("%-" + columnWidth + "s %-" + columnWidth + "s",
-		"--------------------", "--------------------"));
+	StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+	StackTraceElement callerElement = stackTrace[4];
+	String callerName = callerElement.getClassName();
 
-	for (String line : lines) {
-	    utils.printLogln(line, VerboseLevelEnum.DEBUG);
-	}
+	String[] splitedSimpleName = callerName.replace(".", "%%").split("%%");
+	String fClassName = splitedSimpleName[splitedSimpleName.length - 1];
 
-    }
+	String line = new String();
+	line = line.concat(msgVerboseLevel.toString().toUpperCase());
+	line = line.concat(" | ");
+	line = line.concat(new Date().toString());
+	line = line.concat(" | ");
+	line = line.concat(fClassName);
 
-    /**
-     * Process a string as message with warning verbose level
-     * 
-     * @param msg String
-     * @return void
-     */
-    public void warning(String msg) {
-	utils.printLogln(msg, VerboseLevelEnum.WARNING);
-    }
+	if (msgVerboseLevel.equals(JwissVerboseLevelEnum.GLOBAL)) {
+	    line = "\033[0;35m".concat(line).concat("\033[0m");
+	    line = line.concat(" - ");
+	    line = line.concat(message);
+	    System.out.println(line);
 
-    /**
-     * Process a list of strings as messages with warning verbose level
-     * 
-     * @param msgs String[]
-     * @return void
-     */
-    public void warning(String[] msgs) {
-	for (String msg : msgs) {
-	    utils.printLogln(msg, VerboseLevelEnum.WARNING);
-	}
-    }
+	} else if (msgVerboseLevel.equals(JwissVerboseLevelEnum.FATAL)) {
+	    line = line.concat(" - ");
+	    line = line.concat(message);
+	    line = "\033[0;31m".concat(line).concat("\033[0m");
+	    System.out.println(line);
 
-    /**
-     * Process a string as message with error verbose level
-     * 
-     * @param msg String
-     * @return void
-     */
-    public void error(String msg) {
-	utils.printLogln(msg, VerboseLevelEnum.ERROR);
-    }
+	} else if (!appVerboseLevel.equals(JwissVerboseLevelEnum.OFF)) {
+	    if ((msgVerboseLevel.equals(JwissVerboseLevelEnum.INFO)
+		    && appVerboseLevel.equals(JwissVerboseLevelEnum.INFO)) ||
+		    (msgVerboseLevel.equals(JwissVerboseLevelEnum.INFO)
+			    && appVerboseLevel.equals(JwissVerboseLevelEnum.DEBUG))) {
+		line = "\033[0;32m".concat(line).concat("\033[0m");
+		line = line.concat(" - ");
+		line = line.concat(message);
 
-    /**
-     * Process a Exception as message with error verbose level
-     * 
-     * @param msg Exception
-     * @return void
-     */
-    public void error(Exception e) {
-	StackTraceElement[] stackTraceElements = e.getStackTrace();
+		System.out.println(line);
 
-	// Converter o array de StackTraceElement para List<String>
-	List<String> stackTraceLines = new ArrayList<>();
-	for (StackTraceElement element : stackTraceElements) {
-	    stackTraceLines.add(element.toString());
-	}
+	    } else if (msgVerboseLevel.equals(JwissVerboseLevelEnum.DEBUG)
+		    && appVerboseLevel.equals(JwissVerboseLevelEnum.DEBUG)) {
+		line = "\033[0;34m".concat(line).concat("\033[0m");
+		line = line.concat(" - ");
+		line = line.concat(message);
+		System.out.println(line);
 
-	// Imprimir cada linha do stack trace
-	for (String line : stackTraceLines) {
-	    utils.printLogln("> " + line, VerboseLevelEnum.ERROR);
-	}
-    }
+	    } else if (msgVerboseLevel.equals(JwissVerboseLevelEnum.WARNING)) {
+		line = "\033[0;33m".concat(line).concat("\033[0m");
+		line = line.concat(" - ");
+		line = line.concat(message);
+		System.out.println(line);
 
-    /**
-     * Process a list of strings as messages with error verbose level
-     * 
-     * @param msgs String[]
-     * @return void
-     */
-    public void error(String[] msgs) {
-	for (String msg : msgs) {
-	    utils.printLogln(msg, VerboseLevelEnum.ERROR);
-	}
-    }
+	    } else if (msgVerboseLevel.equals(JwissVerboseLevelEnum.ERROR)) {
+		line = "\033[0;31m".concat(line).concat("\033[0m");
+		line = line.concat(" - ");
+		line = line.concat(message);
+		System.out.println(line);
 
-    /**
-     * Process a string as message with fatal verbose level
-     * 
-     * @param msg String
-     * @return void
-     */
-    public void fatal(String msg) {
-	utils.printLogln(msg, VerboseLevelEnum.FATAL);
-    }
+	    }
 
-    /**
-     * Process a list of strings as messages with fatal verbose level
-     * 
-     * @param msgs String[]
-     * @return void
-     */
-    public void fatal(String[] msgs) {
-	for (String msg : msgs) {
-	    utils.printLogln(msg, VerboseLevelEnum.FATAL);
-	}
-    }
+	} else {
+	    if (msgVerboseLevel.equals(JwissVerboseLevelEnum.GLOBAL)) {
+		line = "\033[0;35m".concat(line).concat("\033[0m");
+		line = line.concat(" - ");
+		line = line.concat(message);
+		System.out.println(line);
 
-    /**
-     * Process a string as message with global verbose level
-     * 
-     * @param msg String
-     * @return void
-     */
-    public void global(String msg) {
-	utils.printLogln(msg, VerboseLevelEnum.GLOBAL);
-    }
-
-    /**
-     * Process a list of strings as messages with global verbose level
-     * 
-     * @param msgs String[]
-     * @return void
-     */
-    public void global(String[] msgs) {
-	for (String msg : msgs) {
-	    utils.printLogln(msg, VerboseLevelEnum.GLOBAL);
+	    }
 	}
     }
 

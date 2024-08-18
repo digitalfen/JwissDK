@@ -91,6 +91,7 @@ public class JwissConfigCache {
      * @return void
      */
     public void put(String key, String value) {
+	key = key.replace("global.", "");
 	this.config.put(
 		JwissConfigTypeEnum.GLOBAL.toString().toLowerCase()
 			+ "."

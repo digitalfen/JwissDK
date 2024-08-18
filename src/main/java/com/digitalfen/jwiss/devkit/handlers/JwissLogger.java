@@ -1,6 +1,6 @@
 package com.digitalfen.jwiss.devkit.handlers;
 
-import com.digitalfen.jwiss.devkit.logger.JwissLogPrinter;
+import com.digitalfen.jwiss.devkit.logger.JwissLogService;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -14,6 +14,6 @@ public class JwissLogger {
     /**
      * Log Printer
      */
-    public static final JwissLogPrinter printer = JwissLogPrinter.getInstance();
+    public static final JwissLogService printer = JwissLogService.getInstance();
 
 }
